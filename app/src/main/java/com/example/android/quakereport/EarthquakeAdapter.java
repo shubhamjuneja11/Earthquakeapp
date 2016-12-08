@@ -1,7 +1,9 @@
 package com.example.android.quakereport;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,12 +59,20 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
             location="from";
             primary=original;
         }
-
-        mag.setText(earthquake.getMagnitude());
+        double magnitude=earthquake.getMagnitude();
+        mag.setText(magnitudeformat(magnitude));
         loc.setText(location);
         prim.setText(primary);
         date.setText(formatDate(new Date(earthquake.getMilli())));
         time.setText(formatTime(new Date(earthquake.getMilli())));
+
+        GradientDrawable gradientDrawable=(GradientDrawable)mag.getBackground();
+        Log.d("mag",magnitude+"");
+        int color=getcolor(magnitude);
+        Log.d("col",color+"");
+        if(gradientDrawable==null)Log.d("n","ill");
+        else Log.d("ada","sd");
+        gradientDrawable.setColor(color);
         return view;
     }
 
@@ -82,5 +93,31 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
     private String formatTime(Date dateObject) {
         SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
         return timeFormat.format(dateObject);
+    }
+    private String magnitudeformat(double d){
+        DecimalFormat decimalFormat=new DecimalFormat("0.0");
+        return decimalFormat.format(d);
+
+    }
+    private int getcolor(double mag){
+        int colorid;
+        int color= (int)Math.floor(mag);
+
+        switch (color){
+            case 0:
+            case 1:
+                colorid=R.color.magnitude1;
+                break;
+            case 2:colorid=R.color.magnitude2;break;
+            case 3:colorid=R.color.magnitude3;break;
+            case 4:colorid=R.color.magnitude4;break;
+            case 5:colorid=R.color.magnitude5;break;
+            case 6:colorid=R.color.magnitude6;break;
+            case 7:colorid=R.color.magnitude7;break;
+            case 8:colorid=R.color.magnitude8;break;
+            case 9:colorid=R.color.magnitude9;break;
+            default:colorid=R.color.magnitude10plus;break;
+        }
+        return ContextCompat.getColor(getContext(),colorid);
     }
 }
