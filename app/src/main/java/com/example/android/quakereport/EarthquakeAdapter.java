@@ -25,22 +25,19 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
     public EarthquakeAdapter(Context context, int earthquake_list_item, ArrayList<Earthquake> earthquakes) {
         super(context,earthquake_list_item,earthquakes);
         this.earthquakes=earthquakes;
-        Log.d("in", "super");
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("here", "b");
+
         View view = convertView;
         if (view == null) {
-            Log.d("in", "null");
             view = LayoutInflater.from(getContext()).inflate(R.layout.earthquake_list_item, parent, false);
         }
-        Log.d("creating", "view");
         Earthquake earthquake = getItem(position);
         TextView mag, date, loc,time,prim;
-        mag = (TextView) view.findViewById(R.id.magntiude);
+        mag = (TextView) view.findViewById(R.id.magnitude);
         loc = (TextView) view.findViewById(R.id.location_offset);
         prim=(TextView)view.findViewById(R.id.primary_location);
         date = (TextView) view.findViewById(R.id.date);

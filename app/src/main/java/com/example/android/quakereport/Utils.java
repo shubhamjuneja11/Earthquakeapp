@@ -36,11 +36,11 @@ Log.d("here","hi");
                 double mag=prop.getDouble("mag");
                 String place=prop.getString("place");
                 long time=prop.getLong("time");
-
+                String url=prop.getString("url");
                /* Date date=new Date(Long.valueOf(time));
                 SimpleDateFormat format=new SimpleDateFormat("DD MM YYYY");
                 String mydate=format.format(date);*/
-                Earthquake earthquake=new Earthquake(mag,place,time);
+                Earthquake earthquake=new Earthquake(mag,place,time,url);
                 al.add(earthquake);
 
             }
