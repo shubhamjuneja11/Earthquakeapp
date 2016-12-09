@@ -17,6 +17,7 @@ package com.example.android.quakereport;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -25,28 +26,28 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class EarthquakeActivity extends AppCompatActivity {
-
+private String url="http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2014-01-01&endtime=2014-01-02&minmagnitude=4.5";
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
-
+    ArrayList<Earthquake> earthquakes=null;
+    EarthquakeAdapter adapter;
+    ListView earthquakeListView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
         // Create a fake list of earthquake locations.
-        ArrayList<Earthquake> earthquakes = Utils.extractquakes();
 
-    if(earthquakes==null) Log.d("so","sorry");
+
         // Find a reference to the {@link ListView} in the layout
-        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        earthquakeListView = (ListView) findViewById(R.id.list);
 
         // Create a new {@link ArrayAdapter} of earthquakes
-       final EarthquakeAdapter adapter=new EarthquakeAdapter(this,R.layout.earthquake_list_item,earthquakes);
-        earthquakeListView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+       new MyAsyncTask().execute(url);
 
         earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -58,5 +59,30 @@ public class EarthquakeActivity extends AppCompatActivity {
             }
         });
 
+    }
+    private void updateui(){
+        adapter=new EarthquakeAdapter(this,R.layout.earthquake_list_item,earthquakes);
+        earthquakeListView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+    }
+    private class MyAsyncTask extends AsyncTask<String,Void,ArrayList<Earthquake>>{
+
+        @Override
+        protected ArrayList<Earthquake> doInBackground(String... params) {
+            try {
+               return Utils.extractquakes(params[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Earthquake> earthquak) {
+            super.onPostExecute(earthquak);
+            earthquakes=earthquak;
+            updateui();
+        }
     }
 }
