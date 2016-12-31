@@ -16,8 +16,11 @@
 package com.example.android.quakereport;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -43,19 +46,26 @@ private String url="http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojs
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
-
-        // Create a fake list of earthquake locations.
-
-
-        // Find a reference to the {@link ListView} in the layout
         earthquakeListView = (ListView) findViewById(R.id.list);
         textview=(TextView)findViewById(R.id.noview);
-    progress=(ProgressBar)findViewById(R.id.progress);
+        progress=(ProgressBar)findViewById(R.id.progress);
         earthquakeListView.setEmptyView(textview);
-       progress.setVisibility(View.VISIBLE);
 
-        LoaderManager loaderManager=getLoaderManager();
-        loaderManager.initLoader(1,null,this);
+
+        ConnectivityManager connectivity=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo network=connectivity.getActiveNetworkInfo();
+        if(network!=null&&network.isConnected())
+        {
+            LoaderManager loaderManager=getLoaderManager();
+            loaderManager.initLoader(1,null,this);
+
+        }
+        else {textview.setText("No Internet Connection");
+        progress.setVisibility(View.GONE);
+        }
+
+
+
         // Create a new {@link ArrayAdapter} of earthquakes
      //  new MyAsyncTask().execute(url);
 
