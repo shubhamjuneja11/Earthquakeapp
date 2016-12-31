@@ -15,21 +15,21 @@
  */
 package com.example.android.quakereport;
 
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.content.Loader;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-public class EarthquakeActivity extends AppCompatActivity {
+
+public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Earthquake>> {
 private String url="http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2014-01-01&endtime=2014-01-02&minmagnitude=4.5";
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
     ArrayList<Earthquake> earthquakes=null;
@@ -46,8 +46,11 @@ private String url="http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojs
         // Find a reference to the {@link ListView} in the layout
         earthquakeListView = (ListView) findViewById(R.id.list);
 
+
+        LoaderManager loaderManager=getLoaderManager();
+        loaderManager.initLoader(1,null,this);
         // Create a new {@link ArrayAdapter} of earthquakes
-       new MyAsyncTask().execute(url);
+     //  new MyAsyncTask().execute(url);
 
         earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -64,9 +67,35 @@ private String url="http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojs
         adapter=new EarthquakeAdapter(this,R.layout.earthquake_list_item,earthquakes);
         earthquakeListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        Log.d("1234","updateui");
 
     }
-    private class MyAsyncTask extends AsyncTask<String,Void,ArrayList<Earthquake>>{
+
+    @Override
+    public Loader<ArrayList<Earthquake>> onCreateLoader(int id, Bundle args) {
+        Log.d("1234","oncreate");
+        return new EarthQuakeLoader(this,url);
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<Earthquake>> loader, ArrayList<Earthquake> data) {
+        Log.d("1234","onfinish");
+        if(adapter!=null)
+        adapter.clear();
+        if(data!=null&&!data.isEmpty())
+            earthquakes=data;
+        updateui();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<Earthquake>> loader) {
+        if(adapter!=null)
+        adapter.clear();
+        Log.d("1234","onreset");
+    }
+
+    /*private class MyAsyncTask extends AsyncTask<String,Void,ArrayList<Earthquake>>{
 
         @Override
         protected ArrayList<Earthquake> doInBackground(String... params) {
@@ -84,5 +113,6 @@ private String url="http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojs
             earthquakes=earthquak;
             updateui();
         }
-    }
+    }*/
+
 }
