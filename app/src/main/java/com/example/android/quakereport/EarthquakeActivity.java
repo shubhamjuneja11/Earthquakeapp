@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,7 @@ private String url="http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojs
     ArrayList<Earthquake> earthquakes=null;
     EarthquakeAdapter adapter;
     ListView earthquakeListView;
+    TextView textview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +47,9 @@ private String url="http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojs
 
         // Find a reference to the {@link ListView} in the layout
         earthquakeListView = (ListView) findViewById(R.id.list);
+        textview=(TextView)findViewById(R.id.noview);
 
+        earthquakeListView.setEmptyView(textview);
 
         LoaderManager loaderManager=getLoaderManager();
         loaderManager.initLoader(1,null,this);
@@ -81,6 +85,7 @@ private String url="http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojs
     @Override
     public void onLoadFinished(Loader<ArrayList<Earthquake>> loader, ArrayList<Earthquake> data) {
         Log.d("1234","onfinish");
+        textview.setText("No earthquakes found");
         if(adapter!=null)
         adapter.clear();
         if(data!=null&&!data.isEmpty())
