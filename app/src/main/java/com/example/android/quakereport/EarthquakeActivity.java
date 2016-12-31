@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ private String url="http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojs
     EarthquakeAdapter adapter;
     ListView earthquakeListView;
     TextView textview;
+    ProgressBar progress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,8 +50,9 @@ private String url="http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojs
         // Find a reference to the {@link ListView} in the layout
         earthquakeListView = (ListView) findViewById(R.id.list);
         textview=(TextView)findViewById(R.id.noview);
-
+    progress=(ProgressBar)findViewById(R.id.progress);
         earthquakeListView.setEmptyView(textview);
+       progress.setVisibility(View.VISIBLE);
 
         LoaderManager loaderManager=getLoaderManager();
         loaderManager.initLoader(1,null,this);
@@ -72,6 +75,7 @@ private String url="http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojs
         earthquakeListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         Log.d("1234","updateui");
+        progress.setVisibility(View.GONE);
 
     }
 
